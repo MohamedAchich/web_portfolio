@@ -1,0 +1,29 @@
+:root{
+  --space-unit:8px;
+  --space-xxs:2px;
+  --space-xs:4px;
+  --space-sm:8px;
+  --space-md:12px;
+  --space-lg:16px;
+  --space-xl:24px;
+  --space-xxl:32px;
+  --space-section:96px;
+
+  /* Semantic aliases */
+  --pad-card:var(--space-xxl);
+  --pad-card-compact:var(--space-lg);
+  --pad-field:var(--space-sm) var(--space-md);
+  --pad-button:var(--space-md) var(--space-lg);
+  --pad-nav:var(--space-lg) var(--space-xl);
+  --band-gap:var(--space-section);
+  --band-gap-mobile:var(--space-xxl);
+  --container-max:1152px;
+
+  /* Breakpoints (reference values) */
+  --bp-wide:1440px;
+  --bp-desktop:1152px;
+  --bp-laptop:992px;
+  --bp-tablet:768px;
+  --bp-mobile-lg:640px;
+  --bp-mobile:576px;
+}

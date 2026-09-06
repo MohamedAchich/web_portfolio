@@ -1,0 +1,66 @@
+:root{
+  /* Brand & accent (base) */
+  --color-primary:#150f23;
+  --color-ink-deep:#1f1633;
+  --color-accent-lime:#c2ef4e;
+  --color-accent-pink:#fa7faa;
+  --color-accent-violet:#6a5fc1;
+  --color-accent-violet-deep:#422082;
+  --color-accent-violet-mid:#79628c;
+
+  /* Surface (base) */
+  --color-surface-canvas-dark:#1f1633;
+  --color-surface-night:#150f23;
+  --color-surface-canvas-light:#ffffff;
+  --color-surface-press-light:#f0f0f0;
+  --color-surface-press-stronger:#efefef;
+
+  /* Hairlines (base) */
+  --color-hairline-violet:#362d59;
+  --color-hairline-cool:#cfcfdb;
+  --color-hairline-cloud:#e5e7eb;
+
+  /* Text (base) */
+  --color-on-primary:#ffffff;
+  --color-ink:#1f1633;
+  --color-ink-press:#1a1a1a;
+  --color-on-dark-muted:rgba(255,255,255,0.72);
+  --color-on-dark-faint:rgba(255,255,255,0.18);
+
+  /* Semantic */
+  --color-ring-focus:rgba(59,130,246,0.5);
+
+  /* Semantic aliases — light canvas (transactional surfaces) */
+  --canvas-light:var(--color-surface-canvas-light);
+  --text-body:var(--color-ink);
+  --text-heading:var(--color-ink-deep);
+  --text-link:var(--color-ink-deep);
+  --surface-card:var(--color-surface-canvas-light);
+  --border-card:var(--color-hairline-cloud);
+  --border-field:var(--color-hairline-cool);
+
+  /* Semantic aliases — dark canvas (marketing / feature surfaces) */
+  --canvas-dark:var(--color-surface-canvas-dark);
+  --text-on-dark:var(--color-on-primary);
+  --text-on-dark-muted:var(--color-on-dark-muted);
+  --surface-card-dark:var(--color-surface-night);
+  --surface-card-spotlight:var(--color-accent-violet-deep);
+  --border-card-dark:var(--color-hairline-violet);
+  --fill-ghost-on-dark:var(--color-on-dark-faint);
+
+  /* Semantic aliases — actions */
+  --action-fill:var(--color-primary);
+  --action-label:var(--color-on-primary);
+  --action-fill-inverted:var(--color-on-primary);
+  --action-label-inverted:var(--color-ink-deep);
+  --action-fill-pressed:var(--color-surface-press-stronger);
+  --action-label-pressed:var(--color-ink-press);
+  --action-fill-disabled:var(--color-hairline-cloud);
+
+  /* Signature */
+  --highlight-chip:var(--color-accent-lime);
+  --highlight-chip-text:var(--color-ink-deep);
+  --accent-punctuation:var(--color-accent-pink);
+  --tag-fill:var(--color-accent-violet-mid);
+  --code-surface:var(--color-surface-night);
+}

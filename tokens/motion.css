@@ -1,0 +1,35 @@
+:root{
+  /* The source documents no animation curves. This is the house motion system:
+     short, ease-out, opacity-and-a-few-pixels only. Nothing bounces, nothing
+     springs, nothing overshoots. If a value here feels lively, it is wrong. */
+  --motion-fast:120ms; /* @kind other */
+  --motion-base:180ms; /* @kind other */
+  --motion-slow:320ms; /* @kind other */
+  --motion-enter:460ms; /* @kind other */
+  --motion-ease:cubic-bezier(0.4,0,0.2,1); /* @kind other */
+  --motion-ease-out:cubic-bezier(0.22,0.61,0.36,1); /* @kind other */
+  --motion-rise:10px; /* @kind other */
+  --motion-lift:-2px; /* @kind other */
+  --transition-fill:background-color var(--motion-fast) var(--motion-ease),color var(--motion-fast) var(--motion-ease);
+  --transition-quiet:background-color var(--motion-base) var(--motion-ease-out),color var(--motion-base) var(--motion-ease-out),border-color var(--motion-base) var(--motion-ease-out),box-shadow var(--motion-base) var(--motion-ease-out),opacity var(--motion-base) var(--motion-ease-out),transform var(--motion-base) var(--motion-ease-out);
+}
+/* Every interactive element settles instead of snapping. */
+a,button,input,select,textarea,summary,[role="button"],[tabindex]{transition:var(--transition-quiet)}
+a:hover,button:hover,[role="button"]:hover{opacity:0.88}
+a:active,button:active,[role="button"]:active{transform:translateY(1px);opacity:1}
+:focus-visible{outline:2px solid var(--color-accent-lime);outline-offset:2px}
+/* Entrance: fade up a short distance, once. */
+@keyframes ml-rise{from{opacity:0;transform:translateY(var(--motion-rise))}to{opacity:1;transform:none}}
+@keyframes ml-fade{from{opacity:0}to{opacity:1}}
+.ml-rise{animation:ml-rise var(--motion-enter) var(--motion-ease-out) both}
+.ml-fade{animation:ml-fade var(--motion-enter) var(--motion-ease-out) both}
+/* Scroll reveal: elements start hidden, gain .is-in when observed. */
+.ml-reveal{opacity:0;transform:translateY(var(--motion-rise));transition:opacity var(--motion-enter) var(--motion-ease-out),transform var(--motion-enter) var(--motion-ease-out)}
+.ml-reveal.is-in{opacity:1;transform:none}
+/* Cards lift by two pixels — the only hover displacement in the system. */
+.ml-lift{transition:transform var(--motion-base) var(--motion-ease-out),box-shadow var(--motion-base) var(--motion-ease-out),border-color var(--motion-base) var(--motion-ease-out)}
+.ml-lift:hover{transform:translateY(var(--motion-lift))}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:1ms!important;animation-delay:0ms!important;transition-duration:1ms!important}
+  .ml-reveal{opacity:1;transform:none}
+}

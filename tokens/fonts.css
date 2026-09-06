@@ -1,0 +1,20 @@
+/* No font binaries were provided with the source material.
+   Display tier: the source names a proprietary geometric sans; per its own
+   substitution note we use Space Grotesk (heavier weights).
+   UI tier: Rubik (as specified). Code tier: Monaco (system, no webfont).
+   Served from Google Fonts; swap these @import lines for local @font-face
+   rules if the real binaries become available. */
+@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Ubuntu+Mono:wght@400;700&display=swap");
+
+/* Code tier faces are system-resident, not shipped binaries. Declared as
+   local() faces so the family names resolve where installed and fall through
+   the stack where they are not. No substitute family is introduced. */
+@font-face{font-family:"Monaco";src:local("Monaco");font-weight:400 700;font-display:swap}
+@font-face{font-family:"Menlo";src:local("Menlo");font-weight:400 700;font-display:swap}
+@font-face{font-family:"Ubuntu Mono";src:local("Ubuntu Mono");font-weight:400 700;font-display:swap}
+
+:root{
+  --font-display:"Space Grotesk","Rubik",-apple-system,system-ui,"Segoe UI",Helvetica,Arial,sans-serif;
+  --font-ui:"Rubik",-apple-system,system-ui,"Segoe UI",Helvetica,Arial,sans-serif;
+  --font-code:Monaco,Menlo,"Ubuntu Mono",monospace;
+}
