@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RabbitMQ vs. NATS — Mohamed Achich</title>
+<link rel="stylesheet" href="../../../styles.css">
+<style>
+  body{margin:0;background:var(--canvas-light);color:var(--text-body)}
+  .wrap{max-width:720px;margin:0 auto;padding:var(--space-section) var(--space-xl)}
+  .back{display:inline-flex;align-items:center;gap:var(--space-xs);color:var(--color-accent-violet-mid);text-decoration:none;font-size:var(--type-caption-size);font-weight:600;text-transform:uppercase;letter-spacing:var(--tracking-caps)}
+  .tag{display:inline-block;margin:var(--space-xl) 0 0}
+  .pill{display:inline-block;font-family:var(--font-ui);font-size:var(--type-caption-size);padding:var(--space-xs) var(--space-sm);border-radius:var(--radius-xs);background:var(--color-surface-canvas-light);border:1px solid var(--border-card);color:var(--color-ink-deep)}
+  h1{font-family:var(--font-display);font-size:var(--type-display-large-size);font-weight:var(--type-display-large-weight);line-height:var(--type-display-large-lh);color:var(--text-heading);margin:var(--space-lg) 0 var(--space-xxl)}
+  article p{font-size:var(--type-body-lg-size);font-weight:var(--type-body-lg-weight);line-height:var(--leading-marketing);margin:0 0 var(--space-xl)}
+  article h2{font-family:var(--font-display);font-size:var(--type-heading-lg-size);font-weight:var(--type-heading-lg-weight);margin:var(--space-xxl) 0 var(--space-lg);color:var(--text-heading)}
+  table{width:100%;border-collapse:collapse;margin:0 0 var(--space-xl);font-size:var(--type-body-md-size)}
+  th,td{text-align:left;padding:var(--space-sm) var(--space-md);border-bottom:1px solid var(--border-card)}
+  th{font-family:var(--font-ui);font-weight:700;color:var(--text-heading)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html#blogs">&larr; Back to portfolio</a>
+  <div class="tag"><span class="pill">Messaging</span></div>
+  <h1>RabbitMQ vs. NATS: picking a broker for event-driven services</h1>
+  <article>
+    <p>Every time a new service needs to talk to another service asynchronously, the same question comes up: RabbitMQ or NATS? Both are good tools solving overlapping but not identical problems, and the wrong pick usually shows up six months later as an operational headache rather than a day-one failure.</p>
+
+    <h2>What each one optimizes for</h2>
+    <p>RabbitMQ is a broker built around queues, exchanges, and routing rules — it's expressive about <em>how</em> a message gets to a consumer (fanout, topic, direct, dead-letter queues built in). NATS Core is built around raw throughput and simplicity — publish-subscribe with almost no ceremony. NATS JetStream adds persistence, replay, and at-least-once delivery on top, closing most of the feature gap with RabbitMQ while keeping the operational footprint lighter.</p>
+
+    <table>
+      <tr><th></th><th>RabbitMQ</th><th>NATS (JetStream)</th></tr>
+      <tr><td>Delivery guarantees</td><td>At-least-once, DLQs built in</td><td>At-least-once with JetStream, at-most-once on Core</td></tr>
+      <tr><td>Message replay</td><td>Requires a plugin or app-level pattern</td><td>Native — replay by time or sequence</td></tr>
+      <tr><td>Routing model</td><td>Rich (exchanges, bindings, topic matching)</td><td>Subject hierarchies with wildcards</td></tr>
+      <tr><td>Operational footprint</td><td>Heavier — Erlang VM, management plugin</td><td>Lightweight single binary, clusters easily</td></tr>
+    </table>
+
+    <h2>Where I've landed</h2>
+    <p>For high-fanout device event pipelines — many publishers, many subscribers, and a need to replay a stream after a consumer was down — NATS JetStream has been the better fit. The subject-hierarchy model maps cleanly onto "events from device X, protocol Y" without building a routing layer by hand, and running a JetStream cluster is meaningfully less operational overhead than a RabbitMQ cluster with mirrored queues.</p>
+    <p>RabbitMQ still wins when the routing logic itself is the hard part — complex conditional fan-out, strict per-consumer acknowledgment semantics, or a team that already has deep Rabbit operational experience. Neither is "faster" in a way that matters until you're past the scale where this is your first bottleneck. Pick based on the shape of your routing problem, not a benchmark.</p>
+  </article>
+</div>
+<script src="../blog-language.js"></script>
+</body>
+</html>

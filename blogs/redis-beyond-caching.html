@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Redis beyond caching — Mohamed Achich</title>
+<link rel="stylesheet" href="../../../styles.css">
+<style>
+  body{margin:0;background:var(--canvas-light);color:var(--text-body)}
+  .wrap{max-width:720px;margin:0 auto;padding:var(--space-section) var(--space-xl)}
+  .back{display:inline-flex;align-items:center;gap:var(--space-xs);color:var(--color-accent-violet-mid);text-decoration:none;font-size:var(--type-caption-size);font-weight:600;text-transform:uppercase;letter-spacing:var(--tracking-caps)}
+  .tag{display:inline-block;margin:var(--space-xl) 0 0}
+  .pill{display:inline-block;font-family:var(--font-ui);font-size:var(--type-caption-size);padding:var(--space-xs) var(--space-sm);border-radius:var(--radius-xs);background:var(--color-surface-canvas-light);border:1px solid var(--border-card);color:var(--color-ink-deep)}
+  h1{font-family:var(--font-display);font-size:var(--type-display-large-size);font-weight:var(--type-display-large-weight);line-height:var(--type-display-large-lh);color:var(--text-heading);margin:var(--space-lg) 0 var(--space-xxl)}
+  article p{font-size:var(--type-body-lg-size);font-weight:var(--type-body-lg-weight);line-height:var(--leading-marketing);margin:0 0 var(--space-xl)}
+  article h2{font-family:var(--font-display);font-size:var(--type-heading-lg-size);font-weight:var(--type-heading-lg-weight);margin:var(--space-xxl) 0 var(--space-lg);color:var(--text-heading)}
+  pre{background:var(--code-surface);color:var(--color-on-primary);font-family:var(--font-code);font-size:var(--type-code-size);line-height:var(--type-code-lh);padding:var(--space-lg);border-radius:var(--radius-md);overflow-x:auto;margin:0 0 var(--space-xl)}
+  code{font-family:var(--font-code)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html#blogs">&larr; Back to portfolio</a>
+  <div class="tag"><span class="pill">Redis</span></div>
+  <h1>Redis beyond caching: leaderboards, locks, and rate limits</h1>
+  <article>
+    <p>Ask most engineers what Redis is for and they'll say "caching." That's true, and it's also the least interesting part of what it does well. The data structures Redis ships — sorted sets, hashes, streams — solve real problems that would otherwise mean standing up a purpose-built service.</p>
+
+    <h2>Leaderboards are a sorted set, not a query</h2>
+    <p>A naive leaderboard is "SELECT ... ORDER BY score DESC LIMIT 100" against your primary database, re-run on every page load. That's fine at low traffic and falls over the moment ranking becomes a hot path. A Redis sorted set gives you O(log N) inserts and O(log N + M) range reads, with rank lookups included for free:</p>
+    <pre><code>ZADD season:leaderboard 4210 "player:8841"
+ZREVRANK season:leaderboard "player:8841"
+ZREVRANGE season:leaderboard 0 99 WITHSCORES</code></pre>
+    <p>The trick that matters in production: treat the sorted set as a rebuildable projection, not a source of truth. Keep the authoritative score in Postgres, and rebuild the Redis structure from it on deploy or on demand. That way a Redis flush is an inconvenience, not data loss.</p>
+
+    <h2>Distributed locks, carefully</h2>
+    <p><code>SET key value NX PX 30000</code> gives you a lock with an expiry in one atomic command — useful for making sure only one worker processes a given job. The caveat that trips people up: a lock with a timeout is not a correctness guarantee if the operation can outlive the timeout. If you need real fencing, pair the lock with a monotonically increasing token and have downstream writes check it, rather than trusting "I hold the lock" alone.</p>
+
+    <h2>Rate limiting without a database round trip</h2>
+    <p>A sliding-window rate limiter fits in a handful of Redis commands wrapped in a Lua script for atomicity — no separate service, no extra network hop to a database. For anything device-facing, where you might have thousands of clients checking in on a schedule, that atomicity is what keeps the limiter itself from becoming the bottleneck it was supposed to prevent.</p>
+
+    <p>None of this replaces Postgres. It replaces the instinct to reach for a general-purpose database for a problem that has a purpose-built data structure sitting one dependency away.</p>
+  </article>
+</div>
+<script src="../blog-language.js"></script>
+</body>
+</html>

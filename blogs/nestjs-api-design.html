@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Structuring a NestJS API that survives real traffic — Mohamed Achich</title>
+<link rel="stylesheet" href="../../../styles.css">
+<style>
+  body{margin:0;background:var(--canvas-light);color:var(--text-body)}
+  .wrap{max-width:720px;margin:0 auto;padding:var(--space-section) var(--space-xl)}
+  .back{display:inline-flex;align-items:center;gap:var(--space-xs);color:var(--color-accent-violet-mid);text-decoration:none;font-size:var(--type-caption-size);font-weight:600;text-transform:uppercase;letter-spacing:var(--tracking-caps)}
+  .tag{display:inline-block;margin:var(--space-xl) 0 0}
+  .pill{display:inline-block;font-family:var(--font-ui);font-size:var(--type-caption-size);padding:var(--space-xs) var(--space-sm);border-radius:var(--radius-xs);background:var(--color-surface-canvas-light);border:1px solid var(--border-card);color:var(--color-ink-deep)}
+  h1{font-family:var(--font-display);font-size:var(--type-display-large-size);font-weight:var(--type-display-large-weight);line-height:var(--type-display-large-lh);color:var(--text-heading);margin:var(--space-lg) 0 var(--space-xxl)}
+  article p{font-size:var(--type-body-lg-size);font-weight:var(--type-body-lg-weight);line-height:var(--leading-marketing);margin:0 0 var(--space-xl)}
+  article h2{font-family:var(--font-display);font-size:var(--type-heading-lg-size);font-weight:var(--type-heading-lg-weight);margin:var(--space-xxl) 0 var(--space-lg);color:var(--text-heading)}
+  pre{background:var(--code-surface);color:var(--color-on-primary);font-family:var(--font-code);font-size:var(--type-code-size);line-height:var(--type-code-lh);padding:var(--space-lg);border-radius:var(--radius-md);overflow-x:auto;margin:0 0 var(--space-xl)}
+  code{font-family:var(--font-code)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html#blogs">&larr; Back to portfolio</a>
+  <div class="tag"><span class="pill">Backend</span></div>
+  <h1>Structuring a NestJS API that survives real traffic</h1>
+  <article>
+    <p>NestJS gets criticized for being "too Java" — decorators everywhere, modules, providers, a dependency injection container. The criticism is fair if you use all of it for a CRUD API that Express would have handled in 200 lines. It stops being fair the moment you have auth, rate limiting, background jobs, and three teams touching the same service.</p>
+
+    <h2>Modules as boundaries, not folders</h2>
+    <p>The mistake I see most often is treating Nest modules as a directory-organization tool — <code>UsersModule</code>, <code>OrdersModule</code>, one per database table. That's just Express with extra ceremony. Modules earn their keep when they enforce a real boundary: a module only exports what other modules are allowed to depend on, and everything else stays private. That's the difference between "organized" and "actually decoupled."</p>
+
+    <h2>Guards and interceptors instead of middleware soup</h2>
+    <p>Express middleware is a flat pipeline — auth, logging, and validation all live in the same conceptual layer, and ordering bugs are easy to introduce. Nest splits that into guards (can this request proceed at all), interceptors (transform the request/response), and pipes (validate and coerce input). Once a team internalizes which one to reach for, request handling stops being a grep through fifteen <code>app.use()</code> calls:</p>
+    <pre><code>@UseGuards(OrgScopedGuard)
+@UseInterceptors(AuditLogInterceptor)
+@Post(':orgId/devices')
+createDevice(@Param('orgId') orgId: string, @Body() dto: CreateDeviceDto) {
+  return this.devices.create(orgId, dto);
+}</code></pre>
+
+    <h2>Where Express still wins</h2>
+    <p>For a single-purpose service — a webhook receiver, a small internal tool — Express with a couple of well-chosen middlewares is still faster to write and easier for a new hire to read in one sitting. Nest's payoff shows up on the timeline where a service outlives its first author, gains a second team, and needs auth and observability to be structural rather than bolted on. Pick based on which problem you actually have, not which one is trendier this year.</p>
+  </article>
+</div>
+<script src="../blog-language.js"></script>
+</body>
+</html>

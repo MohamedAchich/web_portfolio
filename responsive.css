@@ -1,0 +1,108 @@
+/* Responsive behavior for the one-page portfolio.
+   The design system's components are styled entirely via inline `style`
+   props (no external classes), so this stylesheet does two things:
+   1. Redefines a handful of shared design tokens at breakpoints — that
+      cascades into every component for free, since they all read the same
+      CSS custom properties (see tokens/spacing.css, tokens/typography.css).
+   2. Targets the few structural grids in this build with `!important`
+      overrides via the class hooks added in each section file, since a
+      grid-template-columns set inline can only be overridden that way. */
+
+/* Section band padding: 96px -> 32px on mobile, per DESIGN.md */
+@media (max-width: 767px) {
+  :root { --space-section: 48px; }
+}
+@media (max-width: 575px) {
+  :root { --space-section: 32px; }
+}
+
+/* Hero display headline: 88 -> 60 -> 48, per DESIGN.md's collapsing strategy */
+@media (max-width: 767px) {
+  :root { --type-display-hero-size: 60px; }
+}
+@media (max-width: 575px) {
+  :root { --type-display-hero-size: 48px; }
+}
+
+/* --- Nav: hamburger below 768px --- */
+@media (max-width: 767px) {
+  header nav.ml-navbar-links {
+    display: none !important;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: var(--space-lg) !important;
+    padding: var(--space-lg) var(--space-xl);
+    z-index: 20;
+  }
+  header nav.ml-navbar-links[data-open="true"] {
+    display: flex !important;
+  }
+  header button.ml-navbar-toggle {
+    display: inline-flex !important;
+  }
+}
+
+/* --- Hero: two columns -> one, portrait becomes a normal aspect box --- */
+@media (max-width: 767px) {
+  .ml-hero-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .ml-hero-portrait {
+    height: 280px !important;
+  }
+}
+
+/* --- Skills: two columns -> one --- */
+@media (max-width: 767px) {
+  .ml-skills-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* --- Blogs: tag column + content + arrow -> stacked --- */
+@media (max-width: 639px) {
+  .ml-blog-row {
+    grid-template-columns: 1fr !important;
+    gap: var(--space-sm) !important;
+  }
+  .ml-blog-row svg {
+    display: none;
+  }
+}
+
+/* --- Projects & testimonials: 3-up -> 2-up -> 1-up --- */
+@media (max-width: 991px) {
+  .ml-projects-grid,
+  .ml-testimonials-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+@media (max-width: 639px) {
+  .ml-projects-grid,
+  .ml-testimonials-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* --- About: bio + availability cards -> stacked --- */
+@media (max-width: 767px) {
+  .ml-about-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+@media (max-width: 575px) {
+  .ml-about-cards {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* --- Contact: copy + form panel -> stacked --- */
+@media (max-width: 767px) {
+  .ml-contact-grid {
+    grid-template-columns: 1fr !important;
+  }
+}

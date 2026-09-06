@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Golang for backend services — Mohamed Achich</title>
+<link rel="stylesheet" href="../../../styles.css">
+<style>
+  body{margin:0;background:var(--canvas-light);color:var(--text-body)}
+  .wrap{max-width:720px;margin:0 auto;padding:var(--space-section) var(--space-xl)}
+  .back{display:inline-flex;align-items:center;gap:var(--space-xs);color:var(--color-accent-violet-mid);text-decoration:none;font-size:var(--type-caption-size);font-weight:600;text-transform:uppercase;letter-spacing:var(--tracking-caps)}
+  .tag{display:inline-block;margin:var(--space-xl) 0 0}
+  .pill{display:inline-block;font-family:var(--font-ui);font-size:var(--type-caption-size);padding:var(--space-xs) var(--space-sm);border-radius:var(--radius-xs);background:var(--color-surface-canvas-light);border:1px solid var(--border-card);color:var(--color-ink-deep)}
+  h1{font-family:var(--font-display);font-size:var(--type-display-large-size);font-weight:var(--type-display-large-weight);line-height:var(--type-display-large-lh);color:var(--text-heading);margin:var(--space-lg) 0 var(--space-xxl)}
+  article p{font-size:var(--type-body-lg-size);font-weight:var(--type-body-lg-weight);line-height:var(--leading-marketing);margin:0 0 var(--space-xl)}
+  article h2{font-family:var(--font-display);font-size:var(--type-heading-lg-size);font-weight:var(--type-heading-lg-weight);margin:var(--space-xxl) 0 var(--space-lg);color:var(--text-heading)}
+  pre{background:var(--code-surface);color:var(--color-on-primary);font-family:var(--font-code);font-size:var(--type-code-size);line-height:var(--type-code-lh);padding:var(--space-lg);border-radius:var(--radius-md);overflow-x:auto;margin:0 0 var(--space-xl)}
+  code{font-family:var(--font-code)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html#blogs">&larr; Back to portfolio</a>
+  <div class="tag"><span class="pill">Backend</span></div>
+  <h1>Golang for backend services: what changes coming from Node.js</h1>
+  <article>
+    <p>Most of my career has been split between Node.js dashboards and Go services sitting behind them. The switch isn't about performance first — Node is plenty fast for the vast majority of API workloads. It's about what the language forces you to make explicit.</p>
+
+    <h2>Goroutines instead of callbacks</h2>
+    <p>In Node, concurrency is a single-threaded event loop with callbacks, promises, or async/await layered on top. It works well until you need real parallelism — CPU-bound work, or fan-out across dozens of downstream calls with independent failure handling. Go's goroutines are cheap enough that you reach for concurrency by default, not as a special case:</p>
+    <pre><code>func fetchAll(ids []string) []Result {
+    results := make([]Result, len(ids))
+    var wg sync.WaitGroup
+    for i, id := range ids {
+        wg.Add(1)
+        go func(i int, id string) {
+            defer wg.Done()
+            results[i] = fetch(id)
+        }(i, id)
+    }
+    wg.Wait()
+    return results
+}</code></pre>
+    <p>No thread pool to configure, no worker library to pull in. That's the pitch: concurrency primitives that are part of the language, not a framework decision.</p>
+
+    <h2>Errors are values, not exceptions</h2>
+    <p>Go makes you handle every error at the call site — <code>if err != nil</code> shows up constantly, and it's genuinely annoying at first. The upside only becomes obvious later: you can't accidentally swallow an error three layers up in a try/catch that was scoped too broadly. Every failure path is visible in the function signature. For services that talk to flaky devices or third-party APIs, that discipline pays for itself.</p>
+
+    <h2>The standard library gets you further than you'd expect</h2>
+    <p><code>net/http</code>, <code>encoding/json</code>, and <code>context</code> cover most of what a typical Node project pulls in five or six packages for. Fewer dependencies means fewer supply-chain surprises and a smaller mental model for anyone joining the codebase — which matters more than it sounds once a service has been running in production for a year.</p>
+
+    <p>None of this makes Go a universal upgrade. I still reach for Node/Next.js for anything dashboard-shaped, where the ecosystem and iteration speed win. But for protocol brokers, event bridges, and anything that needs to hold hundreds of long-lived connections without falling over, Go has earned the default slot.</p>
+  </article>
+</div>
+<script src="../blog-language.js"></script>
+</body>
+</html>
